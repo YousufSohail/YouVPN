@@ -12,6 +12,9 @@ import androidx.annotation.NonNull
  */
 class VpnSDK private constructor(@NonNull val context: Context) {
 
+    /**
+     * Companion object which inherits from singleton holder class and receives constructor as lamda
+     */
     companion object : SingletonHolder<VpnSDK, Context>(::VpnSDK) {
         const val EXTRA_KEY_CONNECTED = "connected"
         const val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST =
