@@ -5,7 +5,8 @@ import android.content.Intent
 import androidx.annotation.NonNull
 
 /**
- * VPN SDK to interface with OpenVPN library.
+ * VPN SDK to interface with OpenVPN library. It provides methods to connect and disconnect
+ * the VPN connection. It also broadcasts the change in VPN connection.
  *
  * @author: Yousuf Sohail
  */
