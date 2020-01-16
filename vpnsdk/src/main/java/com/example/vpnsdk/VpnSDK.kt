@@ -11,12 +11,11 @@ import androidx.annotation.NonNull
  */
 class VpnSDK private constructor(@NonNull context: Context) {
 
-    private val mContext: Context = context
-    private val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST = "com.example.vpnsdk.broadcast.VPN_CONNECTION_CHANGED"
+    companion object : SingletonHolder<VpnSDK, Context>(::VpnSDK)
 
     val EXTRA_KEY_CONNECTED = "connected"
-
-    companion object : SingletonHolder<VpnSDK, Context>(::VpnSDK)
+    private val mContext: Context = context
+    private val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST = "com.example.vpnsdk.broadcast.VPN_CONNECTION_CHANGED"
 
     /**
      * Create the VPN connection
@@ -35,7 +34,11 @@ class VpnSDK private constructor(@NonNull context: Context) {
     }
 
     /**
-     * To signal the consuming app VPN connection change. Either connected or disconnected
+     * Send a broadcast to signal the registered receivers that the VPN connection is change.
+     * Either connected or disconnected
+     *
+     * @param context: Context
+     * @param isConnected: Boolean
      */
     fun VpnConnectionChangedBroadcast(@NonNull context: Context, isConnected: Boolean) {
         Intent().also { intent ->
