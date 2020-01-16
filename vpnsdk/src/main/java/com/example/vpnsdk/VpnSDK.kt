@@ -12,7 +12,8 @@ import androidx.annotation.NonNull
 class VpnSDK private constructor(@NonNull context: Context) {
 
     private val mContext: Context = context
-    val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST = "com.example.vpnsdk.broadcast.VPN_CONNECTION_CHANGED"
+    private val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST = "com.example.vpnsdk.broadcast.VPN_CONNECTION_CHANGED"
+
     val EXTRA_KEY_CONNECTED = "connected"
 
     companion object : SingletonHolder<VpnSDK, Context>(::VpnSDK)
