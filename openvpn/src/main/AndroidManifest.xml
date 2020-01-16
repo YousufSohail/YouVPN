@@ -1,2 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.blinkt.openvpn" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="de.blinkt.openvpn">
+
+
+    <application
+        android:name=".core.ICSOpenVPNApplication"
+        android:allowBackup="true"
+        android:appCategory="productivity"
+        android:extractNativeLibs="true"
+        android:supportsRtl="true"
+        tools:ignore="UnusedAttribute">
+
+        <activity
+            android:name=".LaunchVPN"
+            android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true"
+            android:label="LaunchVPN"
+            android:taskAffinity=".LaunchVPN"
+            tools:ignore="ExportedActivity" />
+
+    </application>
+</manifest>
