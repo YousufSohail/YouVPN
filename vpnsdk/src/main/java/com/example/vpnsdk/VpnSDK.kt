@@ -48,4 +48,5 @@ class VpnSDK private constructor(@NonNull context: Context) {
             context.sendBroadcast(intent)
         }
     }
+
 }
