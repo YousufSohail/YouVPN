@@ -126,12 +126,7 @@ class VpnSDK private constructor(@NonNull val context: Context) {
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val state = intent.getStringExtra("state")
-            if (state != null)
-                broadcastVpnConnectionStatusChange(context, state)
-            else
-                broadcastVpnConnectionStatusChange(context, "Unknown")
-
-
+            if (state != null) broadcastVpnConnectionStatusChange(context, state)
         }
     }
 }
