@@ -1,16 +1,18 @@
 package com.example.vpnsdk
 
-//import de.blinkt.openvpn.LaunchVPN
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.VpnService
 import android.os.RemoteException
 import androidx.annotation.NonNull
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.OpenVPNThread
+import de.blinkt.openvpn.core.VpnStatus
 import java.io.IOException
 
 /**
@@ -21,16 +23,17 @@ import java.io.IOException
  */
 class VpnSDK private constructor(@NonNull val context: Context) {
 
+    private var isServerStarted = false
 
-    private val vpnThread = OpenVPNThread()
-    private val vpnService = OpenVPNService()
-    var vpnStart = false
+    init {
+        VpnStatus.initLogCache(context.cacheDir)
+    }
 
     /**
      * Companion object which inherits from singleton holder class and receives constructor as lamda
      */
     companion object : SingletonHolder<VpnSDK, Context>(::VpnSDK) {
-        const val EXTRA_KEY_CONNECTED = "connected"
+        const val EXTRA_KEY_STATUS = "status"
         const val ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST =
             "com.example.vpnsdk.broadcast.VPN_CONNECTION_CHANGED"
     }
@@ -39,42 +42,22 @@ class VpnSDK private constructor(@NonNull val context: Context) {
      * Create the VPN connection
      */
     fun connect(): Boolean {
-//        try {
-//            val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
-//                it.readText()
-//            }
-//            val profile = VpnProfile(content)
-//            startVPN(profile)
-//
-//        } catch (e: IOException) {
-//            //log the exception
-//            return false
-//        }
-//        return true
-
-
         LocalBroadcastManager.getInstance(context)
             .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
         startVpn()
         return true
     }
 
-    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.getStringExtra("state")) {
-                "CONNECTED" -> VpnConnectionChangedBroadcast(context, true)
-                "DISCONNECTED" -> VpnConnectionChangedBroadcast(context, false)
-            }
-        }
-    }
-
     /**
      * Disconnect the VPN connect
      */
     fun disconnect(): Boolean {
-        return true
+        return stopVpn()
     }
 
+    /**
+     * Get the current status of VPN connection
+     */
     fun getStatus(): String {
         return OpenVPNService.getStatus()
     }
@@ -84,49 +67,71 @@ class VpnSDK private constructor(@NonNull val context: Context) {
      * Either connected or disconnected
      *
      * @param context: Context
-     * @param isConnected: Boolean
+     * @param status: String
      */
-    fun VpnConnectionChangedBroadcast(@NonNull context: Context, isConnected: Boolean) {
+    fun broadcastVpnConnectionStatusChange(@NonNull context: Context, status: String) {
         Intent().also { intent ->
             intent.action = ACTION_KEY_VPN_CONNECTION_CHANGED_BROADCAST
-            intent.putExtra(EXTRA_KEY_CONNECTED, isConnected)
+            intent.putExtra(EXTRA_KEY_STATUS, status)
             context.sendBroadcast(intent)
         }
     }
 
-    /**
-     * Load the
-     *
-     * @param profile
-     */
     private fun startVpn() {
-        try {
-            val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
-                it.readText()
+        // check if
+        if (!isServerStarted) {
+            //checking permission for network monitor
+            val intent = VpnService.prepare(context)
+            if (intent != null && context is Activity) {
+                context.startActivityForResult(intent, 1)
+            } else {
+                try {
+                    val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
+                        it.readText()
+                    }
+                    OpenVpnApi.startVpn(context, content, "ivacy0s6809988", "qwertyuiop")
+                    isServerStarted = true
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                } catch (e: RemoteException) {
+                    e.printStackTrace()
+                }
             }
-            OpenVpnApi.startVpn(context, content, "ivacy0s6809988", "qwertyuiop")
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: RemoteException) {
-            e.printStackTrace()
+//            }
+//                status("connecting")
+
+
         }
     }
 
+    /**
+     * Stop vpn
+     *
+     * @return boolean
+     */
+    private fun stopVpn(): Boolean {
+        try {
+            OpenVPNThread.stop()
+//            broadcastVpnConnectionStatusChange(context, "Disconnected")
+            isServerStarted = false
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
-    //    private fun startVPN(profile: VpnProfile) {
-//
-//        val profileManager = ProfileManager.getInstance(context)
-//
-//        profileManager.saveProfile(context, profile)
-//        profileManager.saveProfileList(context)
-//
-//        val intent = Intent(context, LaunchVPN::class.java)
-//        intent.putExtra(LaunchVPN.EXTRA_KEY, profile.uuid.toString())
-//        intent.putExtra(LaunchVPN.EXTRA_NAME, profile.uuid.toString() + ".vp")
-////        intent.putExtra(LaunchVPN.EXTRA_NAME, "temporary-vpn-profile" + ".vp")
-//        intent.action = Intent.ACTION_MAIN
-//        context.startActivity(intent)
-//    }
+        return false
+
+    }
+
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val state = intent.getStringExtra("state")
+            if (state != null)
+                broadcastVpnConnectionStatusChange(context, state)
+            else
+                broadcastVpnConnectionStatusChange(context, "Unknown")
 
 
+        }
+    }
 }

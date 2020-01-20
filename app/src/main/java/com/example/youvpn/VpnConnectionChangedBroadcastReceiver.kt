@@ -17,7 +17,7 @@ class VpnConnectionChangedBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         StringBuilder().apply {
             append("Action: ${intent.action}\n")
-            append("Connected: ${intent.extras?.getBoolean(VpnSDK.EXTRA_KEY_CONNECTED)}\n")
+            append("Connected: ${intent.extras?.getBoolean(VpnSDK.EXTRA_KEY_STATUS)}\n")
             toString().also { log ->
                 Log.d(TAG, log)
                 Toast.makeText(context, log, Toast.LENGTH_LONG).show()
