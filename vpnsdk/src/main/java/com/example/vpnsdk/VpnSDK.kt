@@ -97,10 +97,6 @@ class VpnSDK private constructor(@NonNull val context: Context) {
                     e.printStackTrace()
                 }
             }
-//            }
-//                status("connecting")
-
-
         }
     }
 
@@ -112,15 +108,12 @@ class VpnSDK private constructor(@NonNull val context: Context) {
     private fun stopVpn(): Boolean {
         try {
             OpenVPNThread.stop()
-//            broadcastVpnConnectionStatusChange(context, "Disconnected")
             isServerStarted = false
             return true
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         return false
-
     }
 
     private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
