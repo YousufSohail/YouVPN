@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/openvpn" />
+            <option value="$PROJECT_DIR$/openvpn-native" />
             <option value="$PROJECT_DIR$/vpnsdk" />
           </set>
         </option>

@@ -1,2 +1,2 @@
-include ':app', ':vpnsdk', ':openvpn'
+include ':app', ':vpnsdk', ':openvpn', ':openvpn-native'
 rootProject.name='YouVPN'
