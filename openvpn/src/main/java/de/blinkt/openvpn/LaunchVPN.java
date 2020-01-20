@@ -129,8 +129,8 @@ public class LaunchVPN extends Activity {
 
         if (Intent.ACTION_MAIN.equals(action)) {
             // Check if we need to clear the log
-            if (Preferences.getDefaultSharedPreferences(this).getBoolean(CLEARLOG, true))
-                VpnStatus.clearLog();
+//            if (Preferences.getDefaultSharedPreferences(this).getBoolean(CLEARLOG, true))
+//                VpnStatus.clearLog();
 
             // we got called to be the starting point, most likely a shortcut
             String shortcutUUID = intent.getStringExtra(EXTRA_KEY);
@@ -266,10 +266,10 @@ public class LaunchVPN extends Activity {
 
     void showLogWindow() {
 
-        Intent startLW = new Intent();
-        startLW.setComponent(new ComponentName(this, getPackageName() + ".activities.LogWindow"));
-        startLW.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(startLW);
+//        Intent startLW = new Intent();
+//        startLW.setComponent(new ComponentName(this, getPackageName() + ".activities.LogWindow"));
+//        startLW.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//        startActivity(startLW);
 
     }
 

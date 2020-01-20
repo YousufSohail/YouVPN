@@ -19,5 +19,19 @@
             android:taskAffinity=".LaunchVPN"
             tools:ignore="ExportedActivity" />
 
+        <activity android:name=".api.ConfirmDialog">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".api.GrantPermissionsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".api.RemoteAction" />
+
     </application>
 </manifest>

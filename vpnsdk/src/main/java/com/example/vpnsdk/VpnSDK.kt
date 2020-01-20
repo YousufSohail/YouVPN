@@ -2,12 +2,17 @@ package com.example.vpnsdk
 
 import android.content.Context
 import android.content.Intent
+import android.os.RemoteException
 import androidx.annotation.NonNull
-import de.blinkt.openvpn.LaunchVPN
+import de.blinkt.openvpn.OpenVpnApi
+//import de.blinkt.openvpn.LaunchVPN
 import de.blinkt.openvpn.VpnProfile
+import de.blinkt.openvpn.core.OpenVPNService
+import de.blinkt.openvpn.core.OpenVPNThread
 import de.blinkt.openvpn.core.ProfileManager
 import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
 
 /**
@@ -17,6 +22,11 @@ import java.io.InputStreamReader
  * @author: Yousuf Sohail
  */
 class VpnSDK private constructor(@NonNull val context: Context) {
+
+
+    private val vpnThread = OpenVPNThread()
+    private val vpnService = OpenVPNService()
+    var vpnStart = false
 
     /**
      * Companion object which inherits from singleton holder class and receives constructor as lamda
@@ -31,19 +41,21 @@ class VpnSDK private constructor(@NonNull val context: Context) {
      * Create the VPN connection
      */
     fun connect(): Boolean {
-        try {
-            val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
-                it.readText()
-            }
-            val profile = VpnProfile(content)
-            startVPN(profile)
+//        try {
+//            val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
+//                it.readText()
+//            }
+//            val profile = VpnProfile(content)
+//            startVPN(profile)
+//
+//        } catch (e: IOException) {
+//            //log the exception
+//            return false
+//        }
+//        return true
 
-        } catch (e: IOException) {
-            //log the exception
-            return false
-        }
+        startVpn()
         return true
-
     }
 
     /**
@@ -51,6 +63,10 @@ class VpnSDK private constructor(@NonNull val context: Context) {
      */
     fun disconnect(): Boolean {
         return true
+    }
+
+    fun getStatus(): String {
+        return OpenVPNService.getStatus()
     }
 
     /**
@@ -68,14 +84,37 @@ class VpnSDK private constructor(@NonNull val context: Context) {
         }
     }
 
-    private fun startVPN(profile: VpnProfile) {
+    /**
+     * Load the
+     *
+     * @param profile
+     */
+//    private fun startVPN(profile: VpnProfile) {
+//
+//        val profileManager = ProfileManager.getInstance(context)
+//
+//        profileManager.saveProfile(context, profile)
+//        profileManager.saveProfileList(context)
+//
+//        val intent = Intent(context, LaunchVPN::class.java)
+//        intent.putExtra(LaunchVPN.EXTRA_KEY, profile.uuid.toString())
+//        intent.putExtra(LaunchVPN.EXTRA_NAME, profile.uuid.toString() + ".vp")
+////        intent.putExtra(LaunchVPN.EXTRA_NAME, "temporary-vpn-profile" + ".vp")
+//        intent.action = Intent.ACTION_MAIN
+//        context.startActivity(intent)
+//    }
 
-        ProfileManager.getInstance(context).saveProfile(context, profile)
-
-        val intent = Intent(context, LaunchVPN::class.java)
-        intent.putExtra(LaunchVPN.EXTRA_KEY, profile.uuid.toString())
-        intent.action = Intent.ACTION_MAIN
-        context.startActivity(intent)
+    private fun startVpn() {
+        try {
+            val content = context.assets.open("au2-udp.ovpn").bufferedReader().use {
+                it.readText()
+            }
+            OpenVpnApi.startVpn(context, content, "ivacy0s6809988", "qwertyuiop")
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+        }
     }
 
 }
